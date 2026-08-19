@@ -18,20 +18,28 @@ export const Route = createFileRoute("/")({
 const schema = z.object({
   name: z.string().trim().min(1, "이름을 입력해 주세요.").max(80),
   email: z.string().trim().email("올바른 이메일 주소를 입력해 주세요.").max(200),
+  phone: z
+    .string()
+    .trim()
+    .max(20)
+    .regex(/^$|^[0-9-+ ]{8,20}$/, "올바른 연락처를 입력해 주세요.")
+    .optional()
+    .or(z.literal("")),
   tier: z.enum(["general", "regular", "lifetime"]),
 });
 
 function ApplyPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [tier, setTier] = useState<TierId>("general");
   const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{ name?: string; email?: string }>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; phone?: string }>({});
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrors({});
-    const parsed = schema.safeParse({ name, email, tier });
+    const parsed = schema.safeParse({ name, email, phone, tier });
     if (!parsed.success) {
       const fe: typeof errors = {};
       for (const issue of parsed.error.issues) {
@@ -45,6 +53,7 @@ function ApplyPage() {
     const { error } = await supabase.from("applications").insert({
       name: parsed.data.name,
       email: parsed.data.email,
+      phone: parsed.data.phone || null,
       tier: parsed.data.tier,
     });
     setSubmitting(false);
@@ -56,6 +65,7 @@ function ApplyPage() {
     toast.success(BRAND.submitSuccess);
     setName("");
     setEmail("");
+    setPhone("");
     setTier("general");
   }
 
@@ -109,6 +119,23 @@ function ApplyPage() {
               />
               {errors.email && (
                 <p className="mt-1 text-xs text-destructive">{errors.email}</p>
+              )}
+            </div>
+
+            <div>
+              <Label htmlFor="phone" className="mb-2 block">
+                연락처
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="010-1234-5678"
+                autoComplete="tel"
+              />
+              {errors.phone && (
+                <p className="mt-1 text-xs text-destructive">{errors.phone}</p>
               )}
             </div>
 

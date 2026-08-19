@@ -34,6 +34,7 @@ type Application = {
   id: string;
   name: string;
   email: string;
+  phone: string | null;
   tier: TierId;
   status: string;
   created_at: string;
@@ -50,7 +51,7 @@ function AdminApplicationsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("applications")
-        .select("id,name,email,tier,status,created_at")
+        .select("id,name,email,phone,tier,status,created_at")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as Application[];
@@ -88,7 +89,11 @@ function AdminApplicationsPage() {
     return rows.filter((r) => {
       if (tierFilter !== "all" && r.tier !== tierFilter) return false;
       if (!kw) return true;
-      return r.name.toLowerCase().includes(kw) || r.email.toLowerCase().includes(kw);
+      return (
+        r.name.toLowerCase().includes(kw) ||
+        r.email.toLowerCase().includes(kw) ||
+        (r.phone ?? "").toLowerCase().includes(kw)
+      );
     });
   }, [rows, q, tierFilter]);
 
@@ -148,6 +153,7 @@ function AdminApplicationsPage() {
                   <th className="px-3 py-2 text-left">번호</th>
                   <th className="px-3 py-2 text-left">이름</th>
                   <th className="px-3 py-2 text-left">이메일</th>
+                  <th className="px-3 py-2 text-left">연락처</th>
                   <th className="px-3 py-2 text-left">등급</th>
                   <th className="px-3 py-2 text-left">신청일</th>
                   <th className="px-3 py-2 text-left">상태</th>
@@ -160,6 +166,7 @@ function AdminApplicationsPage() {
                     <td className="px-3 py-2 text-muted-foreground">{i + 1}</td>
                     <td className="px-3 py-2 font-medium">{r.name}</td>
                     <td className="px-3 py-2 text-muted-foreground">{r.email}</td>
+                    <td className="px-3 py-2 text-muted-foreground">{r.phone || "-"}</td>
                     <td className="px-3 py-2">
                       <Select
                         value={r.tier}

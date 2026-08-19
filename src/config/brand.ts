@@ -1,12 +1,12 @@
 // 단체명·안내 문구는 이 파일에서만 바꾸면 앱 전체에 반영됩니다.
 export const BRAND = {
-  orgName: "우리 단체",
+  orgName: "장수영 월드",
   tagline: "함께 만드는 변화, 당신의 후원으로 시작됩니다",
   intro:
-    "우리 단체의 활동에 마음을 보태주셔서 감사합니다. 아래 양식을 작성해 주시면 담당자가 확인 후 안내 메일을 보내드립니다.",
+    "장수영 월드의 활동에 마음을 보태주셔서 감사합니다. 아래 양식을 작성해 주시면 담당자가 확인 후 안내 메일을 보내드립니다.",
   submitSuccess: "신청이 접수되었습니다. 감사합니다.",
   contactEmail: "hello@example.org",
-  footer: "© 우리 단체 · 이 화면은 강의용 템플릿입니다.",
+  footer: "© 장수영 월드 · 이 화면은 강의용 템플릿입니다.",
 } as const;
 
 export type TierId = "general" | "regular" | "lifetime";
